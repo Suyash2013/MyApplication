@@ -13,7 +13,7 @@ jobs:
           command: chmod -x gradlew
       - run:
           name: Build Project
-          command: ./gradlew assembleRelease
+          command: chmod +x gradlew && ./gradlew compileDebug --stacktrace
 
   unit-test:
     executor:
