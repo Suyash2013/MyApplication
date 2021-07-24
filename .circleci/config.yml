@@ -13,7 +13,7 @@ jobs:
           command: chmod -x gradlew
       - run:
           name: Build Project
-          command: chmod +x gradlew && ./gradlew compileDebug --stacktrace
+          command: chmod +x gradlew && ./gradlew assembleDebug --stacktrace
 
   unit-test:
     executor:
@@ -24,7 +24,7 @@ jobs:
           name: Change Permission
           command: chmod -x gradlew
       - android/run-tests:
-          test-command: ./gradlew lint testDebug --continue
+          test-command: chmod +x gradlew && ./gradlew lint testDebug --continue
   ui-test:
     executor:
       name: android/android-machine
@@ -34,7 +34,7 @@ jobs:
           name: Change Permission
           command: chmod -x gradlew
       - android/start-emulator-and-run-tests:
-          test-command: ./gradlew connectedDebugAndroidTest
+          test-command: chmod +x gradlew && ./gradlew connectedDebugAndroidTest
           system-image: system-images;android-25;google_apis;x86
 
   deploy-prod:
@@ -44,7 +44,7 @@ jobs:
       - checkout
       - run:
           name: Deploy to Production
-          command: ./gradlew assembleRelease
+          command: chmod +x gradlew && ./gradlew assembleRelease
 
   deploy-staging:
     executor:
@@ -53,7 +53,7 @@ jobs:
       - checkout
       - run:
           name: Deploy to Firebase
-          command: ./gradlew assembleRelease
+          command: chmod +x gradlew && ./gradlew assembleRelease
 
 workflows:
   sample:
