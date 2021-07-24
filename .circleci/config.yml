@@ -1,0 +1,83 @@
+version: 2.1
+orbs:
+  android: circleci/android@1.0.3
+
+jobs:
+  build:
+    executor:
+      name: android/android-machine
+    steps:
+      - checkout
+      - run:
+          name: Change Permission
+          command: chmod -x gradlew
+      - run:
+          name: Build Project
+          command: chmod +x gradlew && ./gradlew assembleDebug --stacktrace
+
+  unit-test:
+    executor:
+      name: android/android-machine
+    steps:
+      - checkout
+      - run:
+          name: Change Permission
+          command: chmod -x gradlew
+      - android/run-tests:
+          test-command: chmod +x gradlew && ./gradlew lint testDebug --continue
+  ui-test:
+    executor:
+      name: android/android-machine
+    steps:
+      - checkout
+      - run:
+          name: Change Permission
+          command: chmod -x gradlew
+      - android/start-emulator-and-run-tests:
+          test-command: chmod +x gradlew && ./gradlew connectedDebugAndroidTest
+          system-image: system-images;android-25;google_apis;x86
+
+  deploy-prod:
+    executor:
+      name: android/android-machine
+    steps:
+      - checkout
+      - run:
+          name: Deploy to Production
+          command: chmod +x gradlew && ./gradlew assembleRelease
+
+  deploy-staging:
+    executor:
+      name: android/android-machine
+    steps:
+      - checkout
+      - run:
+          name: Deploy to Firebase
+          command: chmod +x gradlew && ./gradlew assembleRelease
+
+workflows:
+  sample:
+    jobs:
+      - build
+      - unit-test:
+          requires:
+            - build
+      - ui-test:
+          requires:
+            - build
+      - deploy-prod:
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - unit-test
+            - ui-test
+      - deploy-prod:
+          filters:
+            branches:
+              only:
+                - staging
+          requires:
+            - unit-test
+            - ui-test
