@@ -24,8 +24,7 @@ jobs:
           name: Change Permission
           command: chmod -x gradlew
       - android/run-tests:
-          test-command:
-            - ./gradlew lint testDebug --continue
+          test-command: ./gradlew lint testDebug --continue
   ui-test:
     executor:
       name: android/android-machine
@@ -35,8 +34,7 @@ jobs:
           name: Change Permission
           command: chmod -x gradlew
       - android/start-emulator-and-run-tests:
-          test-command:
-            - ./gradlew connectedDebugAndroidTest
+          test-command: ./gradlew connectedDebugAndroidTest
           system-image: system-images;android-25;google_apis;x86
 
   deploy-prod:
@@ -68,7 +66,7 @@ workflows:
           requires:
             - build
       - deploy-prod:
-          filter:
+          filters:
             branches:
               only:
                 - master
@@ -76,7 +74,7 @@ workflows:
             - unit-test
             - ui-test
       - deploy-prod:
-          filter:
+          filters:
             branches:
               only:
                 - staging
